@@ -165,3 +165,56 @@ class WorkerThread:
         finally:
             if self._fcts[2]:
                 self._fcts[2](*self._args)
+
+class SerialSocketEmulator(object):
+    """
+    A socket manager emulating a serial port.
+    This is meant to feed RtuMaster, to do RTU over TCP.
+    """
+
+    def __init__(self, host, port):
+        """Constructor"""
+        self._sock = None
+        self._host = host
+        self._port = port
+        self.portstr = host + '/' + str(port)
+        self._is_open = False
+        
+        # Ugly stub
+        self.baudrate = 9600
+        self.interCharTimeout = 0
+        self.timeout = 1
+
+    def open(self):
+        """Open port"""
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._sock.connect((self._host, self._port))
+        self._sock.settimeout(self.timeout)
+        self._is_open = True
+    
+    def close(self):
+        """Close port"""
+        if self._sock is not None:
+            self._sock.close()
+            self._sock = None
+
+    def read(self, bufsize):
+        """Read bufsize bytes on port"""
+        return self._sock.recv(bufsize)
+
+    def write(self, string):
+        """Send string on port"""
+        self._sock.send(string)
+
+    def isOpen(self):
+        """Return True if and only if port is open"""
+        return self._is_open
+
+    def flushInput(self):
+        """Flush input buffer"""
+        flush_socket(self._sock)
+
+    def flushOutput(self):
+        """Flush output buffer"""
+        pass
+
