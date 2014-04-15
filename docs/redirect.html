@@ -1,0 +1,38 @@
+<html><head><title>Epydoc Redirect Page</title>
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="pragma" content="no-cache" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+<!--
+var pages = ["modbus_tk.simulator_rpc_client.SimulatorRpcClient-c", "modbus_tk.modbus.ModbusFunctionNotSupportedError-c", "modbus_tk.modbus.ModbusInvalidResponseError-c", "modbus_tk.modbus_tcp.ModbusInvalidMbapError-c", "modbus_tk.modbus.ModbusInvalidRequestError-c", "modbus_tk.modbus.InvalidModbusBlockError-c", "modbus_tk.modbus.ModbusNotConnectedError-c", "modbus_tk.modbus.OverlapModbusBlockError-c", "modbus_tk.modbus.OutOfModbusBlockError-c", "modbus_tk.modbus.InvalidArgumentError-c", "modbus_tk.simulator.ConsoleInterface-c", "modbus_tk.modbus.DuplicatedKeyError-c", "modbus_tk.simulator.CompositeServer-c", "modbus_tk.modbus.MissingKeyError-c", "modbus_tk.simulator.RpcInterface-c", "modbus_tk.simulator_rpc_client-m", "modbus_tk.modbus_rtu.RtuMaster-c", "modbus_tk.modbus_rtu.RtuServer-c", "modbus_tk.modbus_tcp.TcpMaster-c", "modbus_tk.modbus_tcp.TcpServer-c", "modbus_tk.simulator.RpcHandler-c", "modbus_tk.utils.ConsoleHandler-c", "modbus_tk.modbus_rtu.RtuQuery-c", "modbus_tk.modbus_tcp.TcpQuery-c", "modbus_tk.simulator.Simulator-c", "modbus_tk.modbus.ModbusBlock-c", "modbus_tk.modbus.ModbusError-c", "modbus_tk.modbus_tcp.TcpMbap-c", "modbus_tk.utils.DummyHandler-c", "modbus_tk.utils.LogitHandler-c", "modbus_tk.utils.WorkerThread-c", "modbus_tk.modbus.Databank-c", "modbus_tk.modbus.Master-c", "modbus_tk.modbus.Server-c", "modbus_tk.modbus.Query-c", "modbus_tk.modbus.Slave-c", "modbus_tk.modbus_rtu-m", "modbus_tk.modbus_tcp-m", "modbus_tk.simulator-m", "modbus_tk.defines-m", "modbus_tk.modbus-m", "modbus_tk.hooks-m", "modbus_tk.utils-m", "modbus_tk-m"];
+var dottedName = get_anchor();
+if (dottedName) {
+    var target = redirect_url(dottedName);
+    if (target) window.location.replace(target);
+}
+// -->
+</script>
+
+<h3>Epydoc Auto-redirect page</h3>
+
+<p>When javascript is enabled, this page will redirect URLs of
+the form <tt>redirect.html#<i>dotted.name</i></tt> to the
+documentation for the object with the given fully-qualified
+dotted name.</p>
+<p><a id="message"> &nbsp; </a></p>
+
+<script type="text/javascript">
+<!--
+if (dottedName) {
+    var msg = document.getElementById("message");
+    msg.innerHTML = "No documentation found for <tt>"+
+                    dottedName+"</tt>";
+}
+// -->
+</script>
+
+</body>
+</html>

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>modbus_tk.utils</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://code.google.com/p/modbus-tk/">Modbus Test Kit</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="modbus_tk-module.html">Package&nbsp;modbus_tk</a> ::
+        Module&nbsp;utils
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="modbus_tk.utils-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="modbus_tk.utils-module.html">Module modbus_tk.utils</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/env python</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: utf-8 -*-</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-docstring"> Modbus TestKit: Implementation of Modbus protocol in python</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-docstring"> (C)2009 - Luc Jean - luc.jean@gmail.com</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-docstring"> (C)2009 - Apidev - http://www.apidev.fr</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-docstring"> This is distributed under GNU LGPL license, see license.txt</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">threading</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">socket</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">select</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"> </tt>
+<a name="threadsafe_function"></a><div id="threadsafe_function-def"><a name="L17"></a><tt class="py-lineno"> 17</tt> <a class="py-toggle" href="#" id="threadsafe_function-toggle" onclick="return toggle('threadsafe_function');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils-module.html#threadsafe_function">threadsafe_function</a><tt class="py-op">(</tt><tt class="py-param">fcn</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="threadsafe_function-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="threadsafe_function-expanded"><a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line">    <tt class="py-docstring">"""decorator making sure that the decorated function is thread safe"""</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line">    <tt class="py-name">lock</tt> <tt class="py-op">=</tt> <tt class="py-name">threading</tt><tt class="py-op">.</tt><tt class="py-name">Lock</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line">    <tt class="py-keyword">def</tt> <tt class="py-def-name">new</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt class="py-param">args</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kwargs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line">        <tt class="py-docstring">"""lock and call the decorated function"""</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line">        <tt class="py-name">lock</tt><tt class="py-op">.</tt><tt class="py-name">acquire</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line">            <tt class="py-name">ret</tt> <tt class="py-op">=</tt> <tt class="py-name">fcn</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt class="py-name">args</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-name">kwargs</tt><tt class="py-op">)</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt> <tt class="py-name">Exception</tt><tt class="py-op">,</tt> <tt class="py-name">excpt</tt><tt class="py-op">:</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">excpt</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">        <tt class="py-keyword">finally</tt><tt class="py-op">:</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">            <tt class="py-name">lock</tt><tt class="py-op">.</tt><tt class="py-name">release</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">ret</tt> </tt>
+</div><a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">new</tt> </tt>
+</div><a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"> </tt>
+<a name="flush_socket"></a><div id="flush_socket-def"><a name="L32"></a><tt class="py-lineno"> 32</tt> <a class="py-toggle" href="#" id="flush_socket-toggle" onclick="return toggle('flush_socket');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils-module.html#flush_socket">flush_socket</a><tt class="py-op">(</tt><tt class="py-param">socks</tt><tt class="py-op">,</tt> <tt class="py-param">lim</tt><tt class="py-op">=</tt><tt class="py-number">0</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="flush_socket-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="flush_socket-expanded"><a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">    <tt class="py-docstring">"""remove the data present on the socket"""</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">    <tt class="py-name">input_socks</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">socks</tt><tt class="py-op">]</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">    <tt class="py-name">cnt</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line">    <tt class="py-keyword">while</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">        <tt class="py-name">i_socks</tt><tt class="py-op">,</tt> <tt class="py-name">o_socks</tt><tt class="py-op">,</tt> <tt class="py-name">e_socks</tt> <tt class="py-op">=</tt> <tt class="py-name">select</tt><tt class="py-op">.</tt><tt class="py-name">select</tt><tt class="py-op">(</tt><tt class="py-name">input_socks</tt><tt class="py-op">,</tt> <tt class="py-name">input_socks</tt><tt class="py-op">,</tt> <tt class="py-name">input_socks</tt><tt class="py-op">,</tt> <tt class="py-number">0.0</tt><tt class="py-op">)</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">i_socks</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">            <tt class="py-keyword">break</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">sock</tt> <tt class="py-keyword">in</tt> <tt class="py-name">i_socks</tt><tt class="py-op">:</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">            <tt class="py-name">sock</tt><tt class="py-op">.</tt><tt class="py-name">recv</tt><tt class="py-op">(</tt><tt class="py-number">1024</tt><tt class="py-op">)</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">lim</tt><tt class="py-op">&gt;</tt><tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">            <tt class="py-name">cnt</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">cnt</tt><tt class="py-op">&gt;=</tt><tt class="py-name">lim</tt><tt class="py-op">:</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">                <tt class="py-comment">#avoid infinite loop due to loss of connection</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> <tt class="py-name">Exception</tt><tt class="py-op">(</tt><tt class="py-string">"flush_socket: maximum number of iterations reached"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"> </tt>
+<a name="get_log_buffer"></a><div id="get_log_buffer-def"><a name="L48"></a><tt class="py-lineno"> 48</tt> <a class="py-toggle" href="#" id="get_log_buffer-toggle" onclick="return toggle('get_log_buffer');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils-module.html#get_log_buffer">get_log_buffer</a><tt class="py-op">(</tt><tt class="py-param">prefix</tt><tt class="py-op">,</tt> <tt class="py-param">buff</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="get_log_buffer-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="get_log_buffer-expanded"><a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">    <tt class="py-docstring">"""Format binary data into a string for debug purpose"""</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">    <tt class="py-name">log</tt> <tt class="py-op">=</tt> <tt class="py-name">prefix</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">buff</tt><tt class="py-op">:</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">        <tt class="py-name">log</tt> <tt class="py-op">+=</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">ord</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">"-"</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">log</tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="ConsoleHandler"></a><div id="ConsoleHandler-def"><a name="L55"></a><tt class="py-lineno"> 55</tt> <a class="py-toggle" href="#" id="ConsoleHandler-toggle" onclick="return toggle('ConsoleHandler');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="modbus_tk.utils.ConsoleHandler-class.html">ConsoleHandler</a><tt class="py-op">(</tt><tt class="py-base-class">logging</tt><tt class="py-op">.</tt><tt class="py-base-class">Handler</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ConsoleHandler-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="ConsoleHandler-expanded"><a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">    <tt class="py-docstring">"""This class is a logger handler. It prints on the console"""</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">     </tt>
+<a name="ConsoleHandler.__init__"></a><div id="ConsoleHandler.__init__-def"><a name="L58"></a><tt class="py-lineno"> 58</tt> <a class="py-toggle" href="#" id="ConsoleHandler.__init__-toggle" onclick="return toggle('ConsoleHandler.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.ConsoleHandler-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ConsoleHandler.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ConsoleHandler.__init__-expanded"><a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">        <tt class="py-docstring">"""Constructor"""</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">Handler</tt><tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Method modbus_tk.modbus.Databank.__init__()=modbus_tk.modbus.Databank-class.html#__init__,Method modbus_tk.modbus.Master.__init__()=modbus_tk.modbus.Master-class.html#__init__,Method modbus_tk.modbus.ModbusBlock.__init__()=modbus_tk.modbus.ModbusBlock-class.html#__init__,Method modbus_tk.modbus.ModbusError.__init__()=modbus_tk.modbus.ModbusError-class.html#__init__,Method modbus_tk.modbus.Query.__init__()=modbus_tk.modbus.Query-class.html#__init__,Method modbus_tk.modbus.Server.__init__()=modbus_tk.modbus.Server-class.html#__init__,Method modbus_tk.modbus.Slave.__init__()=modbus_tk.modbus.Slave-class.html#__init__,Method modbus_tk.modbus_rtu.RtuMaster.__init__()=modbus_tk.modbus_rtu.RtuMaster-class.html#__init__,Method modbus_tk.modbus_rtu.RtuQuery.__init__()=modbus_tk.modbus_rtu.RtuQuery-class.html#__init__,Method modbus_tk.modbus_rtu.RtuServer.__init__()=modbus_tk.modbus_rtu.RtuServer-class.html#__init__,Method modbus_tk.modbus_tcp.ModbusInvalidMbapError.__init__()=modbus_tk.modbus_tcp.ModbusInvalidMbapError-class.html#__init__,Method modbus_tk.modbus_tcp.TcpMaster.__init__()=modbus_tk.modbus_tcp.TcpMaster-class.html#__init__,Method modbus_tk.modbus_tcp.TcpMbap.__init__()=modbus_tk.modbus_tcp.TcpMbap-class.html#__init__,Method modbus_tk.modbus_tcp.TcpQuery.__init__()=modbus_tk.modbus_tcp.TcpQuery-class.html#__init__,Method modbus_tk.modbus_tcp.TcpServer.__init__()=modbus_tk.modbus_tcp.TcpServer-class.html#__init__,Method modbus_tk.simulator.CompositeServer.__init__()=modbus_tk.simulator.CompositeServer-class.html#__init__,Method modbus_tk.simulator.ConsoleInterface.__init__()=modbus_tk.simulator.ConsoleInterface-class.html#__init__,Method modbus_tk.simulator.RpcInterface.__init__()=modbus_tk.simulator.RpcInterface-class.html#__init__,Method modbus_tk.simulator.Simulator.__init__()=modbus_tk.simulator.Simulator-class.html#__init__,Method modbus_tk.simulator_rpc_client.SimulatorRpcClient.__init__()=modbus_tk.simulator_rpc_client.SimulatorRpcClient-class.html#__init__,Method modbus_tk.utils.ConsoleHandler.__init__()=modbus_tk.utils.ConsoleHandler-class.html#__init__,Method modbus_tk.utils.DummyHandler.__init__()=modbus_tk.utils.DummyHandler-class.html#__init__,Method modbus_tk.utils.LogitHandler.__init__()=modbus_tk.utils.LogitHandler-class.html#__init__,Method modbus_tk.utils.WorkerThread.__init__()=modbus_tk.utils.WorkerThread-class.html#__init__"><a title="modbus_tk.modbus.Databank.__init__
+modbus_tk.modbus.Master.__init__
+modbus_tk.modbus.ModbusBlock.__init__
+modbus_tk.modbus.ModbusError.__init__
+modbus_tk.modbus.Query.__init__
+modbus_tk.modbus.Server.__init__
+modbus_tk.modbus.Slave.__init__
+modbus_tk.modbus_rtu.RtuMaster.__init__
+modbus_tk.modbus_rtu.RtuQuery.__init__
+modbus_tk.modbus_rtu.RtuServer.__init__
+modbus_tk.modbus_tcp.ModbusInvalidMbapError.__init__
+modbus_tk.modbus_tcp.TcpMaster.__init__
+modbus_tk.modbus_tcp.TcpMbap.__init__
+modbus_tk.modbus_tcp.TcpQuery.__init__
+modbus_tk.modbus_tcp.TcpServer.__init__
+modbus_tk.simulator.CompositeServer.__init__
+modbus_tk.simulator.ConsoleInterface.__init__
+modbus_tk.simulator.RpcInterface.__init__
+modbus_tk.simulator.Simulator.__init__
+modbus_tk.simulator_rpc_client.SimulatorRpcClient.__init__
+modbus_tk.utils.ConsoleHandler.__init__
+modbus_tk.utils.DummyHandler.__init__
+modbus_tk.utils.LogitHandler.__init__
+modbus_tk.utils.WorkerThread.__init__" class="py-name" href="#" onclick="return doclink('link-0', '__init__', 'link-0');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">         </tt>
+<a name="ConsoleHandler.emit"></a><div id="ConsoleHandler.emit-def"><a name="L62"></a><tt class="py-lineno"> 62</tt> <a class="py-toggle" href="#" id="ConsoleHandler.emit-toggle" onclick="return toggle('ConsoleHandler.emit');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.ConsoleHandler-class.html#emit">emit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">record</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ConsoleHandler.emit-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ConsoleHandler.emit-expanded"><a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-docstring">"""format and print the record on the console"""</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">record</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="LogitHandler"></a><div id="LogitHandler-def"><a name="L66"></a><tt class="py-lineno"> 66</tt> <a class="py-toggle" href="#" id="LogitHandler-toggle" onclick="return toggle('LogitHandler');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="modbus_tk.utils.LogitHandler-class.html">LogitHandler</a><tt class="py-op">(</tt><tt class="py-base-class">logging</tt><tt class="py-op">.</tt><tt class="py-base-class">Handler</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LogitHandler-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="LogitHandler-expanded"><a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">    <tt class="py-docstring">"""This class is a logger handler. It send to a udp socket"""</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">     </tt>
+<a name="LogitHandler.__init__"></a><div id="LogitHandler.__init__-def"><a name="L69"></a><tt class="py-lineno"> 69</tt> <a class="py-toggle" href="#" id="LogitHandler.__init__-toggle" onclick="return toggle('LogitHandler.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.LogitHandler-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">dest</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LogitHandler.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="LogitHandler.__init__-expanded"><a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-docstring">"""Constructor"""</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">Handler</tt><tt class="py-op">.</tt><tt id="link-1" class="py-name"><a title="modbus_tk.modbus.Databank.__init__
+modbus_tk.modbus.Master.__init__
+modbus_tk.modbus.ModbusBlock.__init__
+modbus_tk.modbus.ModbusError.__init__
+modbus_tk.modbus.Query.__init__
+modbus_tk.modbus.Server.__init__
+modbus_tk.modbus.Slave.__init__
+modbus_tk.modbus_rtu.RtuMaster.__init__
+modbus_tk.modbus_rtu.RtuQuery.__init__
+modbus_tk.modbus_rtu.RtuServer.__init__
+modbus_tk.modbus_tcp.ModbusInvalidMbapError.__init__
+modbus_tk.modbus_tcp.TcpMaster.__init__
+modbus_tk.modbus_tcp.TcpMbap.__init__
+modbus_tk.modbus_tcp.TcpQuery.__init__
+modbus_tk.modbus_tcp.TcpServer.__init__
+modbus_tk.simulator.CompositeServer.__init__
+modbus_tk.simulator.ConsoleInterface.__init__
+modbus_tk.simulator.RpcInterface.__init__
+modbus_tk.simulator.Simulator.__init__
+modbus_tk.simulator_rpc_client.SimulatorRpcClient.__init__
+modbus_tk.utils.ConsoleHandler.__init__
+modbus_tk.utils.DummyHandler.__init__
+modbus_tk.utils.LogitHandler.__init__
+modbus_tk.utils.WorkerThread.__init__" class="py-name" href="#" onclick="return doclink('link-1', '__init__', 'link-0');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_dest</tt> <tt class="py-op">=</tt> <tt class="py-name">dest</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_sock</tt> <tt class="py-op">=</tt> <tt class="py-name">socket</tt><tt class="py-op">.</tt><tt class="py-name">socket</tt><tt class="py-op">(</tt><tt class="py-name">socket</tt><tt class="py-op">.</tt><tt class="py-name">AF_INET</tt><tt class="py-op">,</tt> <tt class="py-name">socket</tt><tt class="py-op">.</tt><tt class="py-name">SOCK_DGRAM</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">         </tt>
+<a name="LogitHandler.emit"></a><div id="LogitHandler.emit-def"><a name="L75"></a><tt class="py-lineno"> 75</tt> <a class="py-toggle" href="#" id="LogitHandler.emit-toggle" onclick="return toggle('LogitHandler.emit');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.LogitHandler-class.html#emit">emit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">record</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LogitHandler.emit-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="LogitHandler.emit-expanded"><a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">        <tt class="py-docstring">"""format and send the record over udp"""</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_sock</tt><tt class="py-op">.</tt><tt class="py-name">sendto</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">record</tt><tt class="py-op">)</tt><tt class="py-op">+</tt><tt class="py-string">"\r\n"</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_dest</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"> </tt>
+<a name="DummyHandler"></a><div id="DummyHandler-def"><a name="L79"></a><tt class="py-lineno"> 79</tt> <a class="py-toggle" href="#" id="DummyHandler-toggle" onclick="return toggle('DummyHandler');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="modbus_tk.utils.DummyHandler-class.html">DummyHandler</a><tt class="py-op">(</tt><tt class="py-base-class">logging</tt><tt class="py-op">.</tt><tt class="py-base-class">Handler</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="DummyHandler-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="DummyHandler-expanded"><a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">    <tt class="py-docstring">"""This class is a logger handler. It doesn't do anything"""</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"> </tt>
+<a name="DummyHandler.__init__"></a><div id="DummyHandler.__init__-def"><a name="L82"></a><tt class="py-lineno"> 82</tt> <a class="py-toggle" href="#" id="DummyHandler.__init__-toggle" onclick="return toggle('DummyHandler.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.DummyHandler-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="DummyHandler.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="DummyHandler.__init__-expanded"><a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-docstring">"""Constructor"""</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">Handler</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name"><a title="modbus_tk.modbus.Databank.__init__
+modbus_tk.modbus.Master.__init__
+modbus_tk.modbus.ModbusBlock.__init__
+modbus_tk.modbus.ModbusError.__init__
+modbus_tk.modbus.Query.__init__
+modbus_tk.modbus.Server.__init__
+modbus_tk.modbus.Slave.__init__
+modbus_tk.modbus_rtu.RtuMaster.__init__
+modbus_tk.modbus_rtu.RtuQuery.__init__
+modbus_tk.modbus_rtu.RtuServer.__init__
+modbus_tk.modbus_tcp.ModbusInvalidMbapError.__init__
+modbus_tk.modbus_tcp.TcpMaster.__init__
+modbus_tk.modbus_tcp.TcpMbap.__init__
+modbus_tk.modbus_tcp.TcpQuery.__init__
+modbus_tk.modbus_tcp.TcpServer.__init__
+modbus_tk.simulator.CompositeServer.__init__
+modbus_tk.simulator.ConsoleInterface.__init__
+modbus_tk.simulator.RpcInterface.__init__
+modbus_tk.simulator.Simulator.__init__
+modbus_tk.simulator_rpc_client.SimulatorRpcClient.__init__
+modbus_tk.utils.ConsoleHandler.__init__
+modbus_tk.utils.DummyHandler.__init__
+modbus_tk.utils.LogitHandler.__init__
+modbus_tk.utils.WorkerThread.__init__" class="py-name" href="#" onclick="return doclink('link-2', '__init__', 'link-0');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"> </tt>
+<a name="DummyHandler.emit"></a><div id="DummyHandler.emit-def"><a name="L86"></a><tt class="py-lineno"> 86</tt> <a class="py-toggle" href="#" id="DummyHandler.emit-toggle" onclick="return toggle('DummyHandler.emit');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.DummyHandler-class.html#emit">emit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">record</tt><tt class="py-op">)</tt><tt class="py-op">:</tt>  </tt>
+</div><a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">        <tt class="py-docstring">"""do nothinbg with the given record"""</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div></div><a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"> </tt>
+<a name="create_logger"></a><div id="create_logger-def"><a name="L90"></a><tt class="py-lineno"> 90</tt> <a class="py-toggle" href="#" id="create_logger-toggle" onclick="return toggle('create_logger');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils-module.html#create_logger">create_logger</a><tt class="py-op">(</tt><tt class="py-param">name</tt><tt class="py-op">=</tt><tt class="py-string">"dummy"</tt><tt class="py-op">,</tt> <tt class="py-param">level</tt><tt class="py-op">=</tt><tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">DEBUG</tt><tt class="py-op">,</tt> \ </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">                  <tt class="py-param">record_format</tt><tt class="py-op">=</tt><tt class="py-string">"%(asctime)s\t%(levelname)s\t%(module)s.%(funcName)s\t%(threadName)s\t%(message)s"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="create_logger-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="create_logger-expanded"><a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">    <tt class="py-docstring">"""Create a logger according to the given settings"""</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">    <tt class="py-name">logger</tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">getLogger</tt><tt class="py-op">(</tt><tt class="py-string">"modbus_tk"</tt><tt class="py-op">)</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">    <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">setLevel</tt><tt class="py-op">(</tt><tt class="py-name">level</tt><tt class="py-op">)</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">    <tt class="py-name">formatter</tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">Formatter</tt><tt class="py-op">(</tt><tt class="py-name">record_format</tt><tt class="py-op">)</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">name</tt> <tt class="py-op">==</tt> <tt class="py-string">"udp"</tt><tt class="py-op">:</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-name">log_handler</tt> <tt class="py-op">=</tt> <tt id="link-3" class="py-name" targets="Class modbus_tk.utils.LogitHandler=modbus_tk.utils.LogitHandler-class.html"><a title="modbus_tk.utils.LogitHandler" class="py-name" href="#" onclick="return doclink('link-3', 'LogitHandler', 'link-3');">LogitHandler</a></tt><tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-string">"127.0.0.1"</tt><tt class="py-op">,</tt> <tt class="py-number">1975</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt class="py-name">name</tt> <tt class="py-op">==</tt> <tt class="py-string">"console"</tt><tt class="py-op">:</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">        <tt class="py-name">log_handler</tt> <tt class="py-op">=</tt> <tt id="link-4" class="py-name" targets="Class modbus_tk.utils.ConsoleHandler=modbus_tk.utils.ConsoleHandler-class.html"><a title="modbus_tk.utils.ConsoleHandler" class="py-name" href="#" onclick="return doclink('link-4', 'ConsoleHandler', 'link-4');">ConsoleHandler</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt class="py-name">name</tt> <tt class="py-op">==</tt> <tt class="py-string">"dummy"</tt><tt class="py-op">:</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-name">log_handler</tt> <tt class="py-op">=</tt> <tt id="link-5" class="py-name" targets="Class modbus_tk.utils.DummyHandler=modbus_tk.utils.DummyHandler-class.html"><a title="modbus_tk.utils.DummyHandler" class="py-name" href="#" onclick="return doclink('link-5', 'DummyHandler', 'link-5');">DummyHandler</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">Exception</tt><tt class="py-op">(</tt><tt class="py-string">"Unknown handler %s"</tt> <tt class="py-op">%</tt> <tt class="py-name">name</tt><tt class="py-op">)</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">    <tt class="py-name">log_handler</tt><tt class="py-op">.</tt><tt class="py-name">setFormatter</tt><tt class="py-op">(</tt><tt class="py-name">formatter</tt><tt class="py-op">)</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">    <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">addHandler</tt><tt class="py-op">(</tt><tt class="py-name">log_handler</tt><tt class="py-op">)</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">logger</tt> </tt>
+</div><a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"> </tt>
+<a name="swap_bytes"></a><div id="swap_bytes-def"><a name="L108"></a><tt class="py-lineno">108</tt> <a class="py-toggle" href="#" id="swap_bytes-toggle" onclick="return toggle('swap_bytes');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils-module.html#swap_bytes">swap_bytes</a><tt class="py-op">(</tt><tt class="py-param">word_val</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="swap_bytes-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="swap_bytes-expanded"><a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">    <tt class="py-docstring">"""swap lsb and msb of a word"""</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">    <tt class="py-name">msb</tt> <tt class="py-op">=</tt> <tt class="py-name">word_val</tt> <tt class="py-op">&gt;&gt;</tt> <tt class="py-number">8</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">    <tt class="py-name">lsb</tt> <tt class="py-op">=</tt> <tt class="py-name">word_val</tt> <tt class="py-op">%</tt> <tt class="py-number">256</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-op">(</tt><tt class="py-name">lsb</tt> <tt class="py-op">&lt;&lt;</tt> <tt class="py-number">8</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-name">msb</tt> </tt>
+</div><a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
+<a name="calculate_crc"></a><div id="calculate_crc-def"><a name="L114"></a><tt class="py-lineno">114</tt> <a class="py-toggle" href="#" id="calculate_crc-toggle" onclick="return toggle('calculate_crc');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils-module.html#calculate_crc">calculate_crc</a><tt class="py-op">(</tt><tt class="py-param">data</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="calculate_crc-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="calculate_crc-expanded"><a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">    <tt class="py-docstring">"""Calculate the CRC16 of a datagram"""</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">    <tt class="py-name">crc</tt> <tt class="py-op">=</tt> <tt class="py-number">0xFFFF</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">data</tt><tt class="py-op">:</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-name">crc</tt> <tt class="py-op">=</tt> <tt class="py-name">crc</tt> <tt class="py-op">^</tt> <tt class="py-name">ord</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt>         </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">j</tt> <tt class="py-keyword">in</tt> <tt class="py-name">xrange</tt><tt class="py-op">(</tt><tt class="py-number">8</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">            <tt class="py-name">tmp</tt> <tt class="py-op">=</tt> <tt class="py-name">crc</tt> <tt class="py-op">&amp;</tt> <tt class="py-number">1</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">            <tt class="py-name">crc</tt> <tt class="py-op">=</tt> <tt class="py-name">crc</tt> <tt class="py-op">&gt;&gt;</tt> <tt class="py-number">1</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">tmp</tt><tt class="py-op">:</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">                <tt class="py-name">crc</tt> <tt class="py-op">=</tt> <tt class="py-name">crc</tt> <tt class="py-op">^</tt> <tt class="py-number">0xA001</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt id="link-6" class="py-name" targets="Function modbus_tk.utils.swap_bytes()=modbus_tk.utils-module.html#swap_bytes"><a title="modbus_tk.utils.swap_bytes" class="py-name" href="#" onclick="return doclink('link-6', 'swap_bytes', 'link-6');">swap_bytes</a></tt><tt class="py-op">(</tt><tt class="py-name">crc</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"> </tt>
+<a name="calculate_rtu_inter_char"></a><div id="calculate_rtu_inter_char-def"><a name="L126"></a><tt class="py-lineno">126</tt> <a class="py-toggle" href="#" id="calculate_rtu_inter_char-toggle" onclick="return toggle('calculate_rtu_inter_char');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils-module.html#calculate_rtu_inter_char">calculate_rtu_inter_char</a><tt class="py-op">(</tt><tt class="py-param">baudrate</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="calculate_rtu_inter_char-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="calculate_rtu_inter_char-expanded"><a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">    <tt class="py-docstring">"""calculates the interchar delay from the baudrate"""</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">baudrate</tt> <tt class="py-op">&lt;=</tt> <tt class="py-number">19200</tt><tt class="py-op">:</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-number">11.0</tt> <tt class="py-op">/</tt> <tt class="py-name">baudrate</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-number">0.0005</tt> </tt>
+</div><a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">     </tt>
+<a name="WorkerThread"></a><div id="WorkerThread-def"><a name="L133"></a><tt class="py-lineno">133</tt> <a class="py-toggle" href="#" id="WorkerThread-toggle" onclick="return toggle('WorkerThread');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="modbus_tk.utils.WorkerThread-class.html">WorkerThread</a><tt class="py-op">:</tt> </tt>
+</div><div id="WorkerThread-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="WorkerThread-expanded"><a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"><tt class="py-docstring">    A thread which is running an almost-ever loop</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"><tt class="py-docstring">    It can be stopped by calling the stop function</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="WorkerThread.__init__"></a><div id="WorkerThread.__init__-def"><a name="L138"></a><tt class="py-lineno">138</tt> <a class="py-toggle" href="#" id="WorkerThread.__init__-toggle" onclick="return toggle('WorkerThread.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.WorkerThread-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">main_fct</tt><tt class="py-op">,</tt> <tt class="py-param">args</tt><tt class="py-op">=</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-param">init_fct</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">exit_fct</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WorkerThread.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WorkerThread.__init__-expanded"><a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">        <tt class="py-docstring">"""Constructor"""</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_fcts</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">init_fct</tt><tt class="py-op">,</tt> <tt class="py-name">main_fct</tt><tt class="py-op">,</tt> <tt class="py-name">exit_fct</tt><tt class="py-op">]</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_args</tt> <tt class="py-op">=</tt> <tt class="py-name">args</tt>  </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_thread</tt> <tt class="py-op">=</tt> <tt class="py-name">threading</tt><tt class="py-op">.</tt><tt class="py-name">Thread</tt><tt class="py-op">(</tt><tt class="py-name">target</tt><tt class="py-op">=</tt><tt id="link-7" class="py-name" targets="Class modbus_tk.utils.WorkerThread=modbus_tk.utils.WorkerThread-class.html"><a title="modbus_tk.utils.WorkerThread" class="py-name" href="#" onclick="return doclink('link-7', 'WorkerThread', 'link-7');">WorkerThread</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Method modbus_tk.utils.WorkerThread._run()=modbus_tk.utils.WorkerThread-class.html#_run"><a title="modbus_tk.utils.WorkerThread._run" class="py-name" href="#" onclick="return doclink('link-8', '_run', 'link-8');">_run</a></tt><tt class="py-op">,</tt> <tt class="py-name">args</tt><tt class="py-op">=</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_go</tt> <tt class="py-op">=</tt> <tt class="py-name">threading</tt><tt class="py-op">.</tt><tt class="py-name">Event</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">         </tt>
+<a name="WorkerThread.start"></a><div id="WorkerThread.start-def"><a name="L145"></a><tt class="py-lineno">145</tt> <a class="py-toggle" href="#" id="WorkerThread.start-toggle" onclick="return toggle('WorkerThread.start');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.WorkerThread-class.html#start">start</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WorkerThread.start-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WorkerThread.start-expanded"><a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">        <tt class="py-docstring">"""Start the thread"""</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_go</tt><tt class="py-op">.</tt><tt class="py-name">set</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_thread</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Method modbus_tk.modbus.Server.start()=modbus_tk.modbus.Server-class.html#start,Method modbus_tk.simulator.CompositeServer.start()=modbus_tk.simulator.CompositeServer-class.html#start,Method modbus_tk.simulator.Simulator.start()=modbus_tk.simulator.Simulator-class.html#start,Method modbus_tk.utils.WorkerThread.start()=modbus_tk.utils.WorkerThread-class.html#start"><a title="modbus_tk.modbus.Server.start
+modbus_tk.simulator.CompositeServer.start
+modbus_tk.simulator.Simulator.start
+modbus_tk.utils.WorkerThread.start" class="py-name" href="#" onclick="return doclink('link-9', 'start', 'link-9');">start</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">     </tt>
+<a name="WorkerThread.stop"></a><div id="WorkerThread.stop-def"><a name="L150"></a><tt class="py-lineno">150</tt> <a class="py-toggle" href="#" id="WorkerThread.stop-toggle" onclick="return toggle('WorkerThread.stop');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.WorkerThread-class.html#stop">stop</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WorkerThread.stop-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WorkerThread.stop-expanded"><a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">        <tt class="py-docstring">"""stop the thread"""</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_thread</tt><tt class="py-op">.</tt><tt class="py-name">isAlive</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_go</tt><tt class="py-op">.</tt><tt class="py-name">clear</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_thread</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">         </tt>
+<a name="WorkerThread._run"></a><div id="WorkerThread._run-def"><a name="L156"></a><tt class="py-lineno">156</tt> <a class="py-toggle" href="#" id="WorkerThread._run-toggle" onclick="return toggle('WorkerThread._run');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="modbus_tk.utils.WorkerThread-class.html#_run">_run</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WorkerThread._run-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WorkerThread._run-expanded"><a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">        <tt class="py-docstring">"""main function of the thread execute _main_fct until stop is called"""</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_fcts</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_fcts</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_args</tt><tt class="py-op">)</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">            <tt class="py-keyword">while</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_go</tt><tt class="py-op">.</tt><tt class="py-name">isSet</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_fcts</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_args</tt><tt class="py-op">)</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt> <tt class="py-name">Exception</tt><tt class="py-op">,</tt> <tt class="py-name">excpt</tt><tt class="py-op">:</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">            <tt id="link-10" class="py-name" targets="Variable modbus_tk.modbus.LOGGER=modbus_tk.modbus-module.html#LOGGER,Variable modbus_tk.modbus_rtu.LOGGER=modbus_tk.modbus_rtu-module.html#LOGGER,Variable modbus_tk.modbus_tcp.LOGGER=modbus_tk.modbus_tcp-module.html#LOGGER,Variable modbus_tk.simulator.LOGGER=modbus_tk.simulator-module.html#LOGGER"><a title="modbus_tk.modbus.LOGGER
+modbus_tk.modbus_rtu.LOGGER
+modbus_tk.modbus_tcp.LOGGER
+modbus_tk.simulator.LOGGER" class="py-name" href="#" onclick="return doclink('link-10', 'LOGGER', 'link-10');">LOGGER</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt><tt class="py-op">(</tt><tt class="py-string">"error: %s"</tt> <tt class="py-op">%</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">excpt</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">        <tt class="py-keyword">finally</tt><tt class="py-op">:</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_fcts</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_fcts</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_args</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://code.google.com/p/modbus-tk/">Modbus Test Kit</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Oct 12 10:19:24 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
