@@ -1,0 +1,4 @@
+build/
+dist/
+modbus_tk.egg-info/
+
