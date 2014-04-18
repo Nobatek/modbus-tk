@@ -189,8 +189,8 @@ class SerialSocketEmulator(object):
     def open(self):
         """Open port"""
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._sock.connect((self._host, self._port))
         self._sock.settimeout(self.timeout)
+        self._sock.connect((self._host, self._port))
         self._is_open = True
     
     def close(self):
