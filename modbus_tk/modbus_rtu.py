@@ -79,7 +79,7 @@ class RtuMaster(Master):
     def __init__(self, serial, interchar_multiplier=1.5):
         """Constructor. Pass the pyserial.Serial object"""
         self._serial = serial
-        LOGGER.info("RtuMaster %s is %s" % (self._serial.portstr, "opened" if self._serial.isOpen() else "closed"))
+        LOGGER.info("RtuMaster %s is %s" % (self._serial.name, "opened" if self._serial.isOpen() else "closed"))
         Master.__init__(self, self._serial.timeout)
         self._t0 = utils.calculate_rtu_inter_char(self._serial.baudrate)
         self._serial.interCharTimeout = interchar_multiplier * self._t0
@@ -143,7 +143,7 @@ class RtuServer(Server):
         """Constructor: initializes the server settings"""
         Server.__init__(self, databank if databank else Databank())
         self._serial = serial
-        LOGGER.info("RtuServer %s is %s" % (self._serial.portstr, "opened" if self._serial.isOpen() else "closed"))
+        LOGGER.info("RtuServer %s is %s" % (self._serial.name, "opened" if self._serial.isOpen() else "closed"))
         self._t0 = utils.calculate_rtu_inter_char(self._serial.baudrate)
         self._serial.interCharTimeout = 1.5 * self._t0
         self._serial.timeout = 10 * self._t0

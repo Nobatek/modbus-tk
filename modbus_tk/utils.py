@@ -178,7 +178,7 @@ class SerialSocketEmulator(object):
         self._sock = None
         self._host = host
         self._port = port
-        self.portstr = host + '/' + str(port)
+        self.name = host + '/' + str(port)
         self._is_open = False
         
         # Ugly stub
