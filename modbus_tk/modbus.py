@@ -158,7 +158,6 @@ class Master:
         """Constructor: can define a timeout"""
         self._timeout = timeout_in_sec
         self._verbose = False
-        self._is_opened = False
         
     def __del__(self):
         """Destructor: close the connection"""
@@ -170,15 +169,11 @@ class Master:
     
     def open(self):
         """open the communication with the slave"""
-        if not self._is_opened:
-            self._do_open()
-            self._is_opened = True
+        self._do_open()
 
     def close(self):
         """close the communication with the slave"""
-        if self._is_opened:
-            self._do_close()
-            self._is_opened = False
+        self._do_close()
         
     def _do_open(self):
         """Open the MAC layer"""    
@@ -222,11 +217,11 @@ class Master:
         is_read_function = False
         nb_of_digits = 0
 
-        #open the connection if it is not already done
+        # open the connection if it is not already done
         self.open()
 
-        #Build the modbus pdu and the format of the expected data.
-        #It depends of function code. see modbus specifications for details.
+        # Build the modbus pdu and the format of the expected data.
+        # It depends of function code. see modbus specifications for details.
         if function_code == defines.READ_COILS or function_code == defines.READ_DISCRETE_INPUTS:
             is_read_function = True
             pdu = struct.pack(">BHH", function_code, starting_address, quantity_of_x)
@@ -352,6 +347,9 @@ class Master:
                             byte_val = byte_val >> 1
                     result = tuple(digits)
                 return result
+        
+        # close the connection
+        self.close()
 
     def set_timeout(self, timeout_in_sec):
         """Defines a timeout on the MAC layer"""
