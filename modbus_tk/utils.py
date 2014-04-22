@@ -208,11 +208,18 @@ class SerialSocketEmulator(object):
 
     def write(self, string):
         """Send string on port"""
-        self._sock.send(string)
+        try:
+            self._sock.send(string)
+        except socket.error as e:
+            LOGGER.error("SerialSocketEmulator: %s" % e)
 
     def isOpen(self):
         """Return True if and only if port is open"""
-        return self._is_open
+        try:
+            return self._is_open
+        except socket.error as e:
+            LOGGER.error("SerialSocketEmulator: %s" % e)
+            return None
 
     def flushInput(self):
         """Flush input buffer"""
