@@ -198,6 +198,7 @@ class SerialSocketEmulator(object):
         if self._sock is not None:
             self._sock.close()
             self._sock = None
+        self._is_open = False
 
     def read(self, bufsize):
         """Read bufsize bytes on port"""
