@@ -310,6 +310,9 @@ class Master:
                 response = retval
             if self._verbose:
                 LOGGER.debug(utils.get_log_buffer("<- ", response))
+            
+            # Close the connection
+            self.close()
 
             # extract the pdu part of the response
             response_pdu = query.parse_response(response)
@@ -348,7 +351,8 @@ class Master:
                     result = tuple(digits)
                 return result
         
-        # close the connection
+        # else (slave == 0)
+        # Close the connection
         self.close()
 
     def set_timeout(self, timeout_in_sec):
