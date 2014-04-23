@@ -15,6 +15,8 @@ import logging
 import socket
 import select
 
+LOGGER = logging.getLogger("modbus_tk")
+
 def threadsafe_function(fcn):
     """decorator making sure that the decorated function is thread safe"""
     lock = threading.Lock()
@@ -179,7 +181,6 @@ class SerialSocketEmulator(object):
         self._host = host
         self._port = port
         self.name = host + '/' + str(port)
-        self._is_open = False
         
         # Ugly stub
         self.baudrate = 9600
@@ -192,38 +193,52 @@ class SerialSocketEmulator(object):
             self._sock.close()
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._sock.settimeout(self.timeout)
-        self._sock.connect((self._host, self._port))
-        self._is_open = True
+        try:
+            self._sock.connect((self._host, self._port))
+        except socket.error as e:
+            LOGGER.warning("Couldn't open socket %s:%d: %s" % (self._host, self._port, e))
     
     def close(self):
         """Close port"""
         if self._sock is not None:
             self._sock.close()
             self._sock = None
-        self._is_open = False
 
     def read(self, bufsize):
         """Read bufsize bytes on port"""
-        return self._sock.recv(bufsize)
+        try:
+            return self._sock.recv(bufsize)
+        except socket.error as e:
+            LOGGER.warning("Couldn't read from socket: %s" % e)
+        except Exception as e:
+            LOGGER.error("Couldn't read from socket: %s" % e)
+        return ''
 
     def write(self, string):
         """Send string on port"""
         try:
-            self._sock.send(string)
+            bytesReallySent = 0
+            while bytesReallySent < len(string):
+                bytesReallySent += self._sock.send(string[bytesReallySent:])
         except socket.error as e:
-            LOGGER.error("SerialSocketEmulator: %s" % e)
+            LOGGER.warning("Couldn't write to socket: %s" % e)
+        except Exception as e:
+            LOGGER.error("Couldn't write to socket: %s" % e)
 
     def isOpen(self):
-        """Return True if and only if port is open"""
-        try:
-            return self._is_open
-        except socket.error as e:
-            LOGGER.error("SerialSocketEmulator: %s" % e)
-            return None
+        """Always return False, so the socket is reopened"""
+        return False
 
     def flushInput(self):
         """Flush input buffer"""
-        flush_socket(self._sock)
+        try:
+            flush_socket(self._sock, 3)
+        except Exception, msg:
+            # If we can't flush the socket successfully,
+            # a disconnection may have happened
+            # Try to reconnect
+            LOGGER.error('Error while flushing the socket: {0}'.format(msg))
+            self.open();
 
     def flushOutput(self):
         """Flush output buffer"""
