@@ -217,9 +217,7 @@ class SerialSocketEmulator(object):
     def write(self, string):
         """Send string on port"""
         try:
-            bytesReallySent = 0
-            while bytesReallySent < len(string):
-                bytesReallySent += self._sock.send(string[bytesReallySent:])
+            self._sock.sendall(string)
         except socket.error as e:
             LOGGER.warning("Couldn't write to socket: %s" % e)
         except Exception as e:
