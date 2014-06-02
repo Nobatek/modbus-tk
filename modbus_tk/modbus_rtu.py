@@ -93,9 +93,8 @@ class RtuMaster(Master):
 
     def _do_close(self):
         """Close the serial port if still opened"""
-        if self._serial.isOpen():
-            self._serial.close()
-            call_hooks("modbus_rtu.RtuMaster.after_close", (self, ))
+        self._serial.close()
+        call_hooks("modbus_rtu.RtuMaster.after_close", (self, ))
 
     def set_timeout(self, timeout_in_sec):
         """Change the timeout value"""
